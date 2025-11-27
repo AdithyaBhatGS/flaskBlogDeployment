@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual envs
+fvenv/
+# Git
+.git
+.gitignore
+
+# Local environment files
+.env
+
+# Docker volumes / database
+mysql_data/
+docker-data/
+
+# OS files
+.DS_Store
+Thumbs.db
+

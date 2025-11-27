@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+    <small>By {{ post.user.username }} on {{ post.created_at.strftime("%Y-%m-%d") }}</small>
+
+    <hr>
+
+    <h4>Comments</h4>
+
+    {% if post.comments %}
+        {% for comment in post.comments %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p>{{ comment.content }}</p>
+                    <small>By {{ comment.user.username }} on {{ comment.created_at.strftime("%Y-%m-%d %H:%M") }}</small>
+
+		    {% if comment.user_id == current_user.id %}
+                	<div class="mt-1">
+                    		<a href="{{ url_for('blog.edit_comment', comment_id=comment.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    		<form action="{{ url_for('blog.delete_comment', comment_id=comment.id) }}" method="POST" style="display:inline;">
+                        		<button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    		</form>
+                	</div>
+            	    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No comments yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <h5>Add a Comment</h5>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows=3) }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %}
+
