@@ -35,3 +35,22 @@ pytest_cache/
 .DS_Store
 Thumbs.db
 
+
+# Local Terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Local Terraform working directory
+.terraform/
+.terraform.lock.hcl
+
+# Sensitive variable files
+*.tfvars
+*.auto.tfvars
+*.tfvars.json
+
+
