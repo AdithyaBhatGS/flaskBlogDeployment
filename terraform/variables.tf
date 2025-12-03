@@ -152,3 +152,61 @@ variable "db_egress" {
   }))
   description = "Contains the egress rules associated with the database"
 }
+
+variable "ecs_cluster_name" {
+  type = string
+  description = "Represents the ecs cluster name for Blog app"
+}
+
+variable "ecs_role_name" {
+  type = string
+  description = "Represents the role name of the ecs"
+}  
+
+variable app_ec2_instance_type {
+  type = string
+  description = "Represents the instance type of the app instance"
+}
+
+variable db_creds_secret_manager {
+  type = string
+  description = "Represents the name of secrets manager"
+} 
+
+variable "db_username" {
+  type = string
+  description = "Database username"
+  sensitive = true
+}
+
+variable "db_password" {
+  type = string
+  description = "Database password"
+  sensitive = true
+}
+
+variable "ecs_task_family" {
+  type = string
+  description = "Represents the name of the task defnition family(all the related task defnitions which are different to one another through config are grouped here)"
+}
+
+variable "task_cpu" {
+  type = number
+  description = "Represents the alloted cpu for ecs tasks"
+}
+
+variable "task_memory" {
+  type = number
+  description = "Represents the alloted memory for ecs tasks"
+}  
+
+
+variable "app_port" {
+  type = number
+  description = "Represents the port number of the application"
+}
+
+variable "aws_region" {
+  type = string
+  description = "Represents the aws region"
+}
