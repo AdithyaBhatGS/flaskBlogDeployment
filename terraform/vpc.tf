@@ -1,20 +1,21 @@
 # VPC setup
 
 resource "aws_vpc" "blog_vpc" {
-  cidr_block = var.vpc_cidr_block
+  cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true
-  instance_tenacy = default
+  instance_tenancy     = "default"
 }
 
 # Public Subnet setup
 
 resource "aws_subnet" "public_blog_subnet" {
-  for_each = var.public_blog_subnet
-  cidr_block = each.cidr_block
-  availability_zone = each.availability_zone
+  vpc_id                  = aws_vpc.blog_vpc.id
+  for_each                = var.public_blog_subnet
+  cidr_block              = each.value.cidr_block
+  availability_zone       = each.value.availability_zone
   map_public_ip_on_launch = true
-  tags = each.tags
+  tags                    = each.value.tags
 }
 
 resource "aws_internet_gateway" "blog_igw" {
@@ -23,7 +24,7 @@ resource "aws_internet_gateway" "blog_igw" {
 
 resource "aws_route_table" "blog_public_rt" {
   vpc_id = aws_vpc.blog_vpc.id
-  tags = var.blog_public_rt_tag
+  tags   = var.blog_public_rt_tag
 }
 
 resource "aws_route" "blog_public_route" {
@@ -33,8 +34,8 @@ resource "aws_route" "blog_public_route" {
 }
 
 resource "aws_route_table_association" "blog_public_rt_subnet_association" {
-  for_each = var.public_blog_subnet
-  subnet_id      = each.id
+  for_each       = aws_subnet.public_blog_subnet
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.blog_public_rt.id
 }
 
@@ -57,9 +58,19 @@ resource "aws_nat_gateway" "nat" {
 
 # Private Subnet setup
 
+resource "aws_subnet" "private_blog_subnet" {
+  vpc_id                  = aws_vpc.blog_vpc.id
+  for_each                = var.private_blog_subnet
+  cidr_block              = each.value.cidr_block
+  availability_zone       = each.value.availability_zone
+  map_public_ip_on_launch = true
+  tags                    = each.value.tags
+}
+
+
 resource "aws_route_table" "blog_private_rt" {
-   vpc_id = aws_vpc.blog_vpc.id
-   tags = var.blog_private_rt_tag
+  vpc_id = aws_vpc.blog_vpc.id
+  tags   = var.blog_private_rt_tag
 }
 
 resource "aws_route" "blog_private_route" {
@@ -69,8 +80,8 @@ resource "aws_route" "blog_private_route" {
 }
 
 resource "aws_route_table_association" "blog_private_rt_subnet_association" {
-  for_each = var.private_blog_subnet
-  subnet_id      = each.id
+  for_each       = aws_subnet.private_blog_subnet
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.blog_private_rt.id
 }
 

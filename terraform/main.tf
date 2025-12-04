@@ -1,14 +1,17 @@
-terraform{
-  required_versions = ">= 1.2"
-  required_providers = {
+
+
+terraform {
+  required_version = ">= 1.2"
+  required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 5.0"
     }
   }
 }
 
-provider "aws"{
+
+provider "aws" {
   region = "us-east-1"
   default_tags {
     tags = {
