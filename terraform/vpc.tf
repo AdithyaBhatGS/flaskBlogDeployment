@@ -1,3 +1,7 @@
+locals {
+  list_of_azs = toset([for subnet in values(var.public_blog_subnet) : subnet.availability_zone])
+}
+
 # VPC setup
 resource "aws_vpc" "blog_vpc" {
   cidr_block           = var.vpc_cidr_block
@@ -44,15 +48,27 @@ resource "aws_route_table_association" "blog_public_rt_subnet_association" {
 
 # Elastic IP for NAT Gateway
 resource "aws_eip" "ngw_eip" {
-  tags = var.eip_tag
+  domain   = "vpc"
+  for_each = local.list_of_azs
+  tags = {
+    Name = "${var.eip_tag}-${each.key}"
+  }
 }
 
 # NAT Gateway
 resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.ngw_eip.id
-  subnet_id     = aws_subnet.public_blog_subnet["public_blog_subnet1"].id
+  for_each = {
+    for name, subnet in aws_subnet.public_blog_subnet :
+    subnet.availability_zone => subnet
+    if contains(local.list_of_azs, subnet.availability_zone)
+  }
 
-  tags = var.nat_tag
+  allocation_id = aws_eip.ngw_eip[each.key].id
+  subnet_id     = each.value.id
+
+  tags = {
+    Name = "${var.nat_tag}-${each.key}"
+  }
 
   depends_on = [aws_internet_gateway.blog_igw]
 }
@@ -64,26 +80,30 @@ resource "aws_subnet" "private_blog_subnet" {
   for_each                = var.private_blog_subnet
   cidr_block              = each.value.cidr_block
   availability_zone       = each.value.availability_zone
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags                    = each.value.tags
 }
 
 # Private Route Table setup
 resource "aws_route_table" "blog_private_rt" {
-  vpc_id = aws_vpc.blog_vpc.id
-  tags   = var.blog_private_rt_tag
+  vpc_id   = aws_vpc.blog_vpc.id
+  for_each = local.list_of_azs
+  tags = {
+    Name = "${var.blog_private_rt_tag}-${each.key}"
+  }
 }
 
 resource "aws_route" "blog_private_route" {
-  route_table_id         = aws_route_table.blog_priavte_rt.id
+  for_each               = aws_nat_gateway.nat
+  route_table_id         = aws_route_table.blog_private_rt[each.key].id
   destination_cidr_block = var.pub_dest_cidr
-  nat_gateway_id         = aws_nat_gateway.nat.id
+  nat_gateway_id         = each.value.id
 }
 
 # Associations of private subnets with private route table
 resource "aws_route_table_association" "blog_private_rt_subnet_association" {
   for_each       = aws_subnet.private_blog_subnet
   subnet_id      = each.value.id
-  route_table_id = aws_route_table.blog_private_rt.id
+  route_table_id = aws_route_table.blog_private_rt[each.value.availability_zone].id
 }
 

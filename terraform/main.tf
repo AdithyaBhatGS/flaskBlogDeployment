@@ -11,7 +11,8 @@ terraform {
 
 # AWS Provider configuration
 provider "aws" {
-  region = "us-east-1"
+  region                   = var.aws_region
+  shared_credentials_files = ["${var.aws_cred_path}"]
   default_tags {
     tags = {
       Project     = "Flask Blog App"
