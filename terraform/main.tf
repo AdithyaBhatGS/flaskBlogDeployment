@@ -1,5 +1,4 @@
-
-
+# Usage of Terraform version and AWS provider
 terraform {
   required_version = ">= 1.2"
   required_providers {
@@ -10,7 +9,7 @@ terraform {
   }
 }
 
-
+# AWS Provider configuration
 provider "aws" {
   region = "us-east-1"
   default_tags {

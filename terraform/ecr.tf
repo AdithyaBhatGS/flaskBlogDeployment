@@ -1,3 +1,4 @@
+# ECR Repository for Blog Application
 resource "aws_ecr_repository" "blog_repo" {
   name                 = var.ecr_repo_name
   image_tag_mutability = "IMMUTABLE"
@@ -8,7 +9,9 @@ resource "aws_ecr_repository" "blog_repo" {
 
 }
 
+# Lifecycle Policy for ECR Repository
 resource "aws_ecr_lifecycle_policy" "life_cycle_policy_for_ecr" {
   repository = aws_ecr_repository.blog_repo.name
-  policy     = file("${path.module}/ecr_lifecycle_policy.json")
+  # ECR Lifecycle Policy to retain only the last 10 images
+  policy = file("${path.module}/ecr_lifecycle_policy.json")
 }
