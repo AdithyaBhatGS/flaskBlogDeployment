@@ -37,13 +37,22 @@ variable "pub_dest_cidr" {
   description = "Represents the cidr block of the destination of the route"
 }
 
-variable "private_blog_subnet" {
+variable "private_app_subnet" {
   type = map(object({
     cidr_block        = string
     availability_zone = string
     tags              = map(string)
   }))
-  description = "Represents the private subnet configurations"
+  description = "Represents the private subnet configurations for app"
+}
+
+variable "private_db_subnet" {
+  type = map(object({
+    cidr_block        = string
+    availability_zone = string
+    tags              = map(string)
+  }))
+  description = "Represents the private subnet configurations for db"
 }
 
 variable "eip_tag" {
@@ -101,6 +110,20 @@ variable "alb_egress" {
   description = "Contains the egress rules associated with the ALB"
 }
 
+variable "ecs_host_sg_description" {
+  type        = string
+  description = "Represents the security group associated with ecs ec2 hosts"
+}
+
+variable "ecs_host_egress" {
+  type = map(object({
+    description = string
+    from_port   = number
+    to_port     = number
+    cidr_blocks = string
+    protocol    = string
+  }))
+}
 variable "app_sg_config" {
   type = map(object({
     name        = string
@@ -210,10 +233,27 @@ variable "task_memory" {
   description = "Represents the alloted memory for ecs tasks"
 }
 
-
 variable "app_port" {
   type        = number
   description = "Represents the port number of the application"
 }
 
+variable "desired_capacity" {
+  type        = number
+  description = "Represents the desired capacity of ecs ec2 instances"
+}
 
+variable "max_size" {
+  type        = number
+  description = "Represents the max size of ecs ec2 instances"
+}
+
+variable "min_size" {
+  type        = number
+  description = "Represents the min size of ecs ec2 instances"
+}
+
+variable "service_desired_count" {
+  type        = string
+  description = "Represents the number of flask app instances running at all times"
+}

@@ -74,10 +74,20 @@ resource "aws_nat_gateway" "nat" {
 }
 
 
-# Private Subnet setup - 2 private subnets, 1 in each AZ
-resource "aws_subnet" "private_blog_subnet" {
+# Private Subnet for app - 2 private subnets, 1 in each AZ
+resource "aws_subnet" "private_app_subnet" {
   vpc_id                  = aws_vpc.blog_vpc.id
-  for_each                = var.private_blog_subnet
+  for_each                = var.private_app_subnet
+  cidr_block              = each.value.cidr_block
+  availability_zone       = each.value.availability_zone
+  map_public_ip_on_launch = false
+  tags                    = each.value.tags
+}
+
+# Private Subnet for db - 2 private subnets, 1 in each AZ
+resource "aws_subnet" "private_db_subnet" {
+  vpc_id                  = aws_vpc.blog_vpc.id
+  for_each                = var.private_db_subnet
   cidr_block              = each.value.cidr_block
   availability_zone       = each.value.availability_zone
   map_public_ip_on_launch = false
@@ -100,10 +110,16 @@ resource "aws_route" "blog_private_route" {
   nat_gateway_id         = each.value.id
 }
 
-# Associations of private subnets with private route table
-resource "aws_route_table_association" "blog_private_rt_subnet_association" {
-  for_each       = aws_subnet.private_blog_subnet
+# Associations of private app subnets with private route table
+resource "aws_route_table_association" "app_private_rt_subnet_association" {
+  for_each       = aws_subnet.private_app_subnet
   subnet_id      = each.value.id
   route_table_id = aws_route_table.blog_private_rt[each.value.availability_zone].id
 }
 
+# Associations of private db subnets with private route table
+resource "aws_route_table_association" "db_private_rt_subnet_association" {
+  for_each       = aws_subnet.private_db_subnet
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.blog_private_rt[each.value.availability_zone].id
+}

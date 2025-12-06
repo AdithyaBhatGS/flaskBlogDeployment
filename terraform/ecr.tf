@@ -7,6 +7,10 @@ resource "aws_ecr_repository" "blog_repo" {
     scan_on_push = true
   }
 
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+
 }
 
 # Lifecycle Policy for ECR Repository
