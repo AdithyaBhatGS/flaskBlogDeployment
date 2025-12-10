@@ -33,7 +33,9 @@ resource "aws_iam_policy" "ecs_task_execution_secrets_policy" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = aws_secretsmanager_secret.db_credentials.arn
+        Resource = [
+          aws_secretsmanager_secret.db_credentials.arn
+        ]
       }
     ]
   })
@@ -51,11 +53,6 @@ resource "aws_iam_role" "ecs_task_role" {
   assume_role_policy = file("${path.module}/ecs_assume_role_policy.json")
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_secrets_attach" {
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
-}
-
 
 # EC2 INSTANCE ROLE FOR ECS
 resource "aws_iam_role" "ecs_instance_role" {
@@ -63,6 +60,9 @@ resource "aws_iam_role" "ecs_instance_role" {
   assume_role_policy = file("${path.module}/ecs_instance_role.json")
 }
 
+# Every ECS EC2 instance present in ecs_cluster will have these policies attached to its role
+
+# Pull container images, publish logs to CloudWatch and talk to other services securely
 resource "aws_iam_role_policy_attachment" "ecs_instance_attach_ecs" {
   role       = aws_iam_role.ecs_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
@@ -203,6 +203,21 @@ resource "aws_ecs_task_definition" "flask_task" {
         {
           name      = "DB_PASS"
           valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:password"
+        }
+      ]
+
+      environment = [
+        {
+          name  = "DB_HOST"
+          value = aws_db_instance.db_instance.address
+        },
+        {
+          name  = "DB_PORT"
+          value = var.db_instance_port
+        },
+        {
+          name  = "DB_NAME"
+          value = var.db_instance_db_name
         }
       ]
 

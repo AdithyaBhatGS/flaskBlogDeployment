@@ -257,3 +257,79 @@ variable "service_desired_count" {
   type        = string
   description = "Represents the number of flask app instances running at all times"
 }
+
+variable "db_subnet_group_name" {
+  type        = string
+  description = "Represents the name of the database subnet group"
+}
+
+variable "db_subnet_group_description" {
+  type        = string
+  description = "Represents the subnet group description of the database subnet group"
+}
+
+variable "db_subnet_group_tags" {
+  type        = map(string)
+  description = "Represents the tags associated with the database subnet group"
+}
+
+variable "param_config" {
+  type        = map(string)
+  description = "Configuration information for the db engine"
+}
+
+variable "db_param_grp_name" {
+  type        = string
+  description = "Represents the name of the database parameter group"
+}
+
+variable "db_param_grp_family" {
+  type        = string
+  description = "Represents the family of the database parameter group"
+}
+
+variable "db_instance_identifier" {
+  type        = string
+  description = "Represents the name of the RDS instance"
+}
+
+variable "db_instance_engine" {
+  type        = string
+  description = "Represents the name of the database engine"
+}
+
+variable "db_instance_engine_version" {
+  type        = string
+  description = "Represents the version of the database engine"
+}
+
+variable "db_instance_instance_class" {
+  type        = string
+  description = "Represents the RDS instance class"
+}
+
+variable "db_instance_allocated_storage" {
+  type        = number
+  description = "Represents the allocated storage in GB"
+}
+
+variable "db_instance_storage_type" {
+  type        = string
+  description = "Represents the storage type (gp3/ gp2/ io1/ io2/ io2 block express)"
+}
+
+variable "db_instance_port" {
+  type        = number
+  description = "Represents the port on which db access the connections"
+}
+
+variable "db_instance_db_name" {
+  type        = string
+  description = "Represents the name of the database when the database instance is created"
+}
+
+variable "db_instance_tags" {
+  type        = map(string)
+  description = "Represents the tag associated with the database instance"
+}
+
