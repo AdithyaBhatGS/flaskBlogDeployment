@@ -87,3 +87,23 @@ output "alb_target_grp_arn" {
   value       = aws_lb_target_group.blog_tg.arn
   description = "Represents the Target Group ARN of the ALB"
 }
+
+output "db_endpoint" {
+  value       = aws_db_instance.db_instance.endpoint
+  description = "Represents the DB endpoint"
+}
+
+output "db_port" {
+  value       = aws_db_instance.db_instance.port
+  description = "Represents the DB port"
+}
+
+output "db_instance_id" {
+  value       = aws_db_instance.db_instance.id
+  description = "Represents the DB instance ID"
+}
+
+output "db_subnet_group" {
+  value       = aws_db_subnet_group.db_subnet_group.name
+  description = "Represents the Subnet group name of the DB"
+}
