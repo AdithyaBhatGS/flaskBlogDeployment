@@ -9,7 +9,7 @@ resource "aws_security_group" "blog_alb_sg" {
   tags = var.alb_sg_config["alb_sg_config"].tags
 }
 
-# ALB Ingress -> http, https
+# ALB Ingress -> http
 resource "aws_vpc_security_group_ingress_rule" "alb_ingress" {
 
   security_group_id = aws_security_group.blog_alb_sg.id
@@ -24,13 +24,13 @@ resource "aws_vpc_security_group_ingress_rule" "alb_ingress" {
 # ALB Egress -> all outbound
 resource "aws_vpc_security_group_egress_rule" "alb_egress" {
 
-  security_group_id = aws_security_group.blog_alb_sg.id
-  for_each          = var.alb_egress
-  description       = each.value.description
-  cidr_ipv4         = each.value.cidr_blocks
-  from_port         = each.value.from_port
-  ip_protocol       = each.value.protocols
-  to_port           = each.value.to_port
+  security_group_id            = aws_security_group.blog_alb_sg.id
+  for_each                     = var.alb_egress
+  description                  = each.value.description
+  referenced_security_group_id = aws_security_group.app_sg.id
+  from_port                    = each.value.from_port
+  ip_protocol                  = each.value.protocols
+  to_port                      = each.value.to_port
 }
 
 
@@ -58,6 +58,19 @@ resource "aws_vpc_security_group_egress_rule" "ecs_host_outbound" {
 
 }
 
+resource "aws_vpc_security_group_ingress_rule" "ecs_host_inbound" {
+  for_each          = var.ecs_host_ingress
+  security_group_id = aws_security_group.ecs_host_sg.id
+  description       = each.value.description
+
+  referenced_security_group_id = aws_security_group.app_sg.id
+
+  from_port   = each.value.from_port
+  to_port     = each.value.to_port
+  ip_protocol = each.value.protocols
+}
+
+
 #  FLASK APP SECURITY GROUP (Containers on EC2/ECS)
 resource "aws_security_group" "app_sg" {
   name        = var.app_sg_config["app_sg_config"].name
@@ -75,10 +88,8 @@ resource "aws_vpc_security_group_ingress_rule" "app_ingress" {
   description       = each.value.description
 
   # ALB → APP (SG rule)
-  referenced_security_group_id = each.key == "flask" ? aws_security_group.blog_alb_sg.id : null
+  referenced_security_group_id = aws_security_group.blog_alb_sg.id
 
-  # CIDR → APP (CIDR rule)
-  cidr_ipv4 = each.key != "flask" ? each.value.cidr_blocks : null
 
   from_port   = each.value.from_port
   to_port     = each.value.to_port
@@ -115,10 +126,7 @@ resource "aws_vpc_security_group_ingress_rule" "mysql_ingress" {
   description       = each.value.description
 
   # APP → DB (SG rule)
-  referenced_security_group_id = each.key == "app" ? aws_security_group.app_sg.id : null
-
-  # CIDR → DB (CIDR rule)
-  cidr_ipv4 = each.key != "app" ? each.value.cidr_blocks : null
+  referenced_security_group_id = aws_security_group.app_sg.id
 
   from_port   = each.value.from_port
   to_port     = each.value.to_port
@@ -126,15 +134,3 @@ resource "aws_vpc_security_group_ingress_rule" "mysql_ingress" {
 }
 
 
-# DB Egress -> all outbound
-resource "aws_vpc_security_group_egress_rule" "mysql_egress" {
-  for_each          = var.db_egress
-  security_group_id = aws_security_group.mysql_sg.id
-  description       = each.value.description
-
-  cidr_ipv4 = each.value.cidr_blocks
-
-  from_port   = each.value.from_port
-  to_port     = each.value.to_port
-  ip_protocol = each.value.protocols
-}

@@ -1,6 +1,7 @@
 # AWS Secrets Manager Secret for Database Credentials
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name = var.db_creds_secret_manager
+  name        = var.db_creds_secret_manager
+  description = "Represents the database credentials for the Flask blog application"
 }
 
 # AWS Secrets Manager Secret Version for Database Credentials

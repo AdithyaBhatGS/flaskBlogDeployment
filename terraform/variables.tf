@@ -18,6 +18,11 @@ variable "vpc_cidr_block" {
   description = "Represents the cidr of the vpc"
 }
 
+variable "vpc_tag" {
+  type        = map(string)
+  description = "Represents the tag of the vpc"
+}
+
 variable "public_blog_subnet" {
   type = map(object({
     cidr_block        = string
@@ -25,16 +30,6 @@ variable "public_blog_subnet" {
     tags              = map(string)
   }))
   description = "Represents the public subnet configurations"
-}
-
-variable "blog_public_rt_tag" {
-  type        = map(string)
-  description = "Represents the tag associated with the route table of public subnet"
-}
-
-variable "pub_dest_cidr" {
-  type        = string
-  description = "Represents the cidr block of the destination of the route"
 }
 
 variable "private_app_subnet" {
@@ -53,6 +48,16 @@ variable "private_db_subnet" {
     tags              = map(string)
   }))
   description = "Represents the private subnet configurations for db"
+}
+
+variable "blog_public_rt_tag" {
+  type        = map(string)
+  description = "Represents the tag associated with the route table of public subnet"
+}
+
+variable "pub_dest_cidr" {
+  type        = string
+  description = "Represents the cidr block of the destination of the route"
 }
 
 variable "eip_tag" {
@@ -74,8 +79,13 @@ variable "private_blog_subnet" {
   description = "Represents the private subnet configurations"
 }
 
+variable "igw_tag" {
+  type        = map(string)
+  description = "Represents the tag associated with internet gateway"
+}
+
 variable "blog_private_rt_tag" {
-  type        = string
+  type        = map(string)
   description = "Represents the tag associated with the route table of private subnet"
 }
 
@@ -124,6 +134,17 @@ variable "ecs_host_egress" {
     protocol    = string
   }))
 }
+
+variable "ecs_host_ingress" {
+  type = map(object({
+    description = string
+    from_port   = number
+    to_port     = number
+    cidr_blocks = string
+    protocol    = string
+  }))
+}
+
 variable "app_sg_config" {
   type = map(object({
     name        = string
@@ -333,3 +354,36 @@ variable "db_instance_tags" {
   description = "Represents the tag associated with the database instance"
 }
 
+variable "lb_name" {
+  type        = string
+  description = "Represents the load balancer name of Application load balancer"
+}
+
+variable "lb_tag" {
+  type        = map(string)
+  description = "Represents the tag associated with the application load balancer"
+}
+
+variable "alb_target_grp_config" {
+  type = object({
+    name                = string
+    port                = number
+    protocol            = string
+    path                = string
+    interval            = number
+    timeout             = number
+    healthy_threshold   = number
+    unhealthy_threshold = number
+    tags                = map(string)
+  })
+}
+
+variable "alb_listener_port" {
+  type        = number
+  description = "Represents the port of the ALB listener"
+}
+
+variable "alb_listener_protocol" {
+  type        = string
+  description = "Represents the protocol of the ALB listener"
+}
