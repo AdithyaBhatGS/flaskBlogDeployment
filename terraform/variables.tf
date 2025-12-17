@@ -70,23 +70,19 @@ variable "nat_tag" {
   description = "Represents the tag associated with NAT gateway"
 }
 
-variable "private_blog_subnet" {
-  type = map(object({
-    cidr_block        = string
-    availability_zone = string
-    tags              = map(string)
-  }))
-  description = "Represents the private subnet configurations"
-}
-
 variable "igw_tag" {
   type        = map(string)
   description = "Represents the tag associated with internet gateway"
 }
 
-variable "blog_private_rt_tag" {
+variable "app_private_rt_tag" {
   type        = map(string)
-  description = "Represents the tag associated with the route table of private subnet"
+  description = "Represents the tag associated with the app route table"
+}
+
+variable "db_private_rt_tag" {
+  type        = map(string)
+  description = "Represents the tag associated with the db route table"
 }
 
 variable "alb_sg_config" {
@@ -135,16 +131,6 @@ variable "ecs_host_egress" {
   }))
 }
 
-variable "ecs_host_ingress" {
-  type = map(object({
-    description = string
-    from_port   = number
-    to_port     = number
-    cidr_blocks = string
-    protocol    = string
-  }))
-}
-
 variable "app_sg_config" {
   type = map(object({
     name        = string
@@ -172,6 +158,7 @@ variable "app_egress" {
     to_port     = number
     cidr_blocks = string
     protocol    = string
+    use_sg      = bool
   }))
   description = "Contains the egress rules associated with the app"
 }
@@ -194,17 +181,6 @@ variable "db_ingress" {
     protocol    = string
   }))
   description = "Contains the ingress rules associated with the database"
-}
-
-variable "db_egress" {
-  type = map(object({
-    description = string
-    from_port   = number
-    to_port     = number
-    cidr_blocks = string
-    protocol    = string
-  }))
-  description = "Contains the egress rules associated with the database"
 }
 
 variable "ecs_cluster_name" {

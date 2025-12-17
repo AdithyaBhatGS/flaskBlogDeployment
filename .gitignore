@@ -38,7 +38,7 @@ Thumbs.db
 
 # Local Terraform state files
 terraform.tfstate
-terraform.tfstate.backup
+terraform.tfstate.*
 
 # Crash logs
 crash.log

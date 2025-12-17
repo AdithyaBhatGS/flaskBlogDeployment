@@ -5,7 +5,7 @@ locals {
 }
 
 # ECS SERVICE (REGISTER TASKS TO ALB)
-
+/*
 resource "aws_ecs_service" "flask_service" {
   name            = "${var.ecs_cluster_name}-service"
   cluster         = aws_ecs_cluster.blog_cluster.id
@@ -30,3 +30,4 @@ resource "aws_ecs_service" "flask_service" {
     aws_lb_listener.https
   ]
 }
+*/

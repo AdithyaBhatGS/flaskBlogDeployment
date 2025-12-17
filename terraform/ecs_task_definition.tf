@@ -1,4 +1,5 @@
 # ECS TASK DEFINITION (awsvpc mode)
+/*
 resource "aws_ecs_task_definition" "flask_task" {
   family                   = var.ecs_task_family
   network_mode             = "awsvpc"
@@ -57,3 +58,4 @@ resource "aws_ecs_task_definition" "flask_task" {
     }
   ])
 }
+*/

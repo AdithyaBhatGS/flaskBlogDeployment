@@ -18,16 +18,16 @@ resource "aws_route_table_association" "blog_public_rt_subnet_association" {
   route_table_id = aws_route_table.blog_public_rt.id
 }
 
-# Private Route Table setup
-resource "aws_route_table" "blog_private_rt" {
+# Private App Route Table setup
+resource "aws_route_table" "app_private_rt" {
   vpc_id   = aws_vpc.blog_vpc.id
   for_each = local.list_of_azs
-  tags     = var.blog_private_rt_tag
+  tags     = var.app_private_rt_tag
 }
 
-resource "aws_route" "blog_private_route" {
+resource "aws_route" "app_private_route" {
   for_each               = aws_nat_gateway.nat
-  route_table_id         = aws_route_table.blog_private_rt[each.key].id
+  route_table_id         = aws_route_table.app_private_rt[each.key].id
   destination_cidr_block = var.pub_dest_cidr
   nat_gateway_id         = each.value.id
 }
@@ -36,12 +36,20 @@ resource "aws_route" "blog_private_route" {
 resource "aws_route_table_association" "app_private_rt_subnet_association" {
   for_each       = aws_subnet.private_app_subnet
   subnet_id      = each.value.id
-  route_table_id = aws_route_table.blog_private_rt[each.value.availability_zone].id
+  route_table_id = aws_route_table.app_private_rt[each.value.availability_zone].id
 }
 
-# Associations of private db subnets with private route table
+# Private DB Route Table setup
+resource "aws_route_table" "db_private_rt" {
+  vpc_id   = aws_vpc.blog_vpc.id
+  for_each = local.list_of_azs
+  tags     = var.db_private_rt_tag
+}
+
+# Associations of private app subnets with private route table
 resource "aws_route_table_association" "db_private_rt_subnet_association" {
   for_each       = aws_subnet.private_db_subnet
   subnet_id      = each.value.id
-  route_table_id = aws_route_table.blog_private_rt[each.value.availability_zone].id
+  route_table_id = aws_route_table.db_private_rt[each.value.availability_zone].id
 }
+

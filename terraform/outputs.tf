@@ -107,3 +107,4 @@ output "db_subnet_group" {
   value       = aws_db_subnet_group.db_subnet_group.name
   description = "Represents the Subnet group name of the DB"
 }
+

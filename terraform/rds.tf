@@ -35,20 +35,21 @@ resource "aws_db_parameter_group" "mysql_param_group" {
 }
 
 
-# MAIN RDS INSTANCE (MULTI-AZ)
-resource "aws_db_instance" "db_instance" {
-  identifier        = var.db_instance_identifier
-  engine            = var.db_instance_engine
-  engine_version    = var.db_instance_engine_version
-  instance_class    = var.db_instance_instance_class
-  allocated_storage = var.db_instance_allocated_storage
+# MAIN RDS INSTANCE (MULTI-AZ)t
+resource "aws_db_instance" "db_insance" {
+  identifier              = var.db_instance_identifier
+  engine                  = var.db_instance_engine
+  engine_version          = var.db_instance_engine_version
+  instance_class          = var.db_instance_instance_class
+  allocated_storage       = var.db_instance_allocated_storage
+  backup_retention_period = 7
+  deletion_protection     = true
+  storage_type            = var.db_instance_storage_type
 
-  storage_type = var.db_instance_storage_type
-
-  multi_az = true
-
-  username = local.db_creds.username
-  password = local.db_creds.password
+  multi_az                  = true
+  final_snapshot_identifier = var.db_instance_identifier
+  username                  = local.db_creds.username
+  password                  = local.db_creds.password
 
   db_name = var.db_instance_db_name
 
@@ -58,8 +59,8 @@ resource "aws_db_instance" "db_instance" {
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.mysql_sg.id]
   parameter_group_name   = aws_db_parameter_group.mysql_param_group.name
-
-  skip_final_snapshot = true
+  backup_window          = "02:00-02:30"
+  skip_final_snapshot    = true
 
   tags = var.db_instance_tags
 }
