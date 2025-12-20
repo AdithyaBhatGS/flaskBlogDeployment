@@ -33,9 +33,14 @@ output "public_rt_id" {
   description = "Represents the ID associated with the public route table"
 }
 
-output "private_rt_ids" {
-  value       = { for rt_name, rt in aws_route_table.blog_private_rt : rt_name => rt.id }
-  description = "Represents the name, id of the private route tables"
+output "private_app_rt_id" {
+  value       = { for rt_name, rt in aws_route_table.app_private_rt : rt_name => rt.id }
+  description = "Represents the name, id of the app route tables"
+}
+
+output "private_db_rt_ids" {
+  value       = { for rt_name, rt in aws_route_table.db_private_rt : rt_name => rt.id }
+  description = "Represents the name, id of the db route tables"
 }
 
 output "eip_ids" {
@@ -89,17 +94,17 @@ output "alb_target_grp_arn" {
 }
 
 output "db_endpoint" {
-  value       = aws_db_instance.db_instance.endpoint
+  value       = aws_db_instance.db_insance.endpoint
   description = "Represents the DB endpoint"
 }
 
 output "db_port" {
-  value       = aws_db_instance.db_instance.port
+  value       = aws_db_instance.db_insance.port
   description = "Represents the DB port"
 }
 
 output "db_instance_id" {
-  value       = aws_db_instance.db_instance.id
+  value       = aws_db_instance.db_insance.id
   description = "Represents the DB instance ID"
 }
 

@@ -91,7 +91,8 @@ resource "aws_vpc_security_group_egress_rule" "app_egress" {
   cidr_ipv4                    = each.value.cidr_blocks != "" ? each.value.cidr_blocks : null
   referenced_security_group_id = each.value.use_sg ? aws_security_group.mysql_sg.id : null
   ip_protocol                  = each.value.protocol
-
+  from_port                    = each.value.from_port
+  to_port                      = each.value.to_port
 }
 
 #  MYSQL SECURITY GROUP (PRIVATE DB)

@@ -43,7 +43,7 @@ resource "aws_iam_role" "ecs_task_role" {
 }
 
 
-# EC2 INSTANCE ROLE FOR ECS
+# EC2 INSTANCE ROLE for ECS Agent on EC2(for registering the instance into the cluster)
 resource "aws_iam_role" "ecs_instance_role" {
   name               = "${var.ecs_cluster_name}-ec2-role"
   assume_role_policy = file("${path.module}/ecs_instance_role.json")

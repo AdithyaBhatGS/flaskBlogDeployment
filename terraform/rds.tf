@@ -43,7 +43,7 @@ resource "aws_db_instance" "db_insance" {
   instance_class          = var.db_instance_instance_class
   allocated_storage       = var.db_instance_allocated_storage
   backup_retention_period = 7
-  deletion_protection     = true
+  deletion_protection     = false
   storage_type            = var.db_instance_storage_type
 
   multi_az                  = true
