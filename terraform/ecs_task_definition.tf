@@ -1,5 +1,10 @@
+
 # ECS TASK DEFINITION (awsvpc mode)
-/*
+
+# locals {
+#   db_host_name   = aws_db_instance.db_insance.address
+#   app_port_local = var.app_port
+# }
 resource "aws_ecs_task_definition" "flask_task" {
   family                   = var.ecs_task_family
   network_mode             = "awsvpc"
@@ -24,22 +29,22 @@ resource "aws_ecs_task_definition" "flask_task" {
       secrets = [
         {
           name      = "DB_USER"
-          valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:username"
+          valueFrom = "${aws_secretsmanager_secret_version.db_credentials_version.arn}:username"
         },
         {
           name      = "DB_PASS"
-          valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:password"
+          valueFrom = "${aws_secretsmanager_secret_version.db_credentials_version.arn}:password"
         }
       ]
 
       environment = [
         {
           name  = "DB_HOST"
-          value = aws_db_instance.db_instance.address
+          value = aws_db_instance.db_insance.address
         },
         {
           name  = "DB_PORT"
-          value = var.db_instance_port
+          value = tostring(var.app_port)
         },
         {
           name  = "DB_NAME"
@@ -58,4 +63,3 @@ resource "aws_ecs_task_definition" "flask_task" {
     }
   ])
 }
-*/

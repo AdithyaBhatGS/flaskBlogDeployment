@@ -5,7 +5,7 @@ locals {
 }
 
 # ECS SERVICE (REGISTER TASKS TO ALB)
-/*
+
 resource "aws_ecs_service" "flask_service" {
   name            = "${var.ecs_cluster_name}-service"
   cluster         = aws_ecs_cluster.blog_cluster.id
@@ -25,9 +25,5 @@ resource "aws_ecs_service" "flask_service" {
     container_port   = var.app_port
   }
 
-  depends_on = [
-    aws_lb_listener.http,
-    aws_lb_listener.https
-  ]
+  depends_on = [aws_alb_listener.http]
 }
-*/
