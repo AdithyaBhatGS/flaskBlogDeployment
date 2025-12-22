@@ -15,7 +15,11 @@ fvenv/
 mysql_data/
 docker-data/
 
-# OS files
-.DS_Store
-Thumbs.db
+# Terraform
+terraform/
+ 
+# Docker compose
+docker-compose.yml
 
+# README
+README.md

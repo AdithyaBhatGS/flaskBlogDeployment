@@ -27,3 +27,4 @@ resource "aws_ecs_service" "flask_service" {
 
   depends_on = [aws_alb_listener.http]
 }
+

@@ -7,6 +7,12 @@ resource "aws_autoscaling_group" "ecs_asg" {
   vpc_zone_identifier       = local.list_of_private_app_subnets
   health_check_type         = "EC2"
   health_check_grace_period = 300
+  force_delete              = true
+
+  timeouts {
+    delete = "30m"
+  }
+
   launch_template {
     id      = aws_launch_template.ecs_lt.id
     version = "$Latest"

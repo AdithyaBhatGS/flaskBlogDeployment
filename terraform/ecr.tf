@@ -11,6 +11,8 @@ resource "aws_ecr_repository" "blog_repo" {
     encryption_type = "AES256"
   }
 
+  force_delete = true
+
 }
 
 # Lifecycle Policy for ECR Repository

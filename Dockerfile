@@ -20,6 +20,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 COPY --from=builder /install /usr/local
+
 COPY . .
 
 RUN chmod +x /app/entrypoint.sh
